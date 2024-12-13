@@ -1,6 +1,6 @@
 {
   "name": "@burotan/strapi-client",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Ultimate client for Strapi!",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "tsup",
-    "test": "jest"
+    "test": "jest",
+    "publish": "tsup && npm publish --access public"
   },
   "repository": {
     "type": "git",
