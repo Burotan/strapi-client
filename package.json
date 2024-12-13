@@ -1,0 +1,40 @@
+{
+  "name": "@burotan/strapi-client",
+  "version": "0.0.1",
+  "description": "Ultimate http client for Strapi!",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/burotan/strapi-client"
+  },
+  "keywords": [
+    "Strapi",
+    "API",
+    "HTTP",
+    "Rest",
+    "Types"
+  ],
+  "author": "Burak Serpici",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@strapi/types": "^5.5.1",
+    "qs": "^6.13.1"
+  }
+}
