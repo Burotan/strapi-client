@@ -1,7 +1,7 @@
 {
   "name": "@burotan/strapi-client",
-  "version": "0.0.1",
-  "description": "Ultimate http client for Strapi!",
+  "version": "0.0.2",
+  "description": "Ultimate client for Strapi!",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
