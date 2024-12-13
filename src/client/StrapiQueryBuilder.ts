@@ -1,6 +1,10 @@
 import QueryString from "qs";
 import { StrapiQuery } from "../types/StrapiQuery";
-import { StrapiClientOptions, StrapiURI } from "../types/StrapiOptions";
+import {
+  StrapiClientOptions,
+  StrapiResult,
+  StrapiURI,
+} from "../types/StrapiOptions";
 
 export class StrapiQueryBuilder<T> {
   private name: string;
@@ -41,31 +45,39 @@ export class StrapiQueryBuilder<T> {
     return method !== "DELETE" ? result.json() : result.ok;
   }
 
-  public async findMany(query?: StrapiQuery) {
+  public async findMany(query?: StrapiQuery): Promise<StrapiResult<any[]>> {
     const url = this.url({ query });
     return await this.fetch("GET", url);
   }
 
-  public async findOne(id: any, query?: StrapiQuery) {
+  public async findOne(
+    id: any,
+    query?: StrapiQuery
+  ): Promise<StrapiResult<any>> {
     const url = this.url({ id, query });
     return await this.fetch("GET", url);
   }
 
-  public async create(data: any, query?: StrapiQuery) {
+  public async create(
+    data: any,
+    query?: StrapiQuery
+  ): Promise<StrapiResult<any>> {
     const url = this.url({ query });
     const result = await this.fetch("POST", url, data);
-    return result.data ? result.data : result;
+    return result;
   }
 
-  public async update(id: any, data: any, query?: StrapiQuery) {
+  public async update(
+    id: any,
+    data: any,
+    query?: StrapiQuery
+  ): Promise<StrapiResult<any>> {
     const url = this.url({ id, query });
-    console.log(url);
-    console.log(data);
     const result = await this.fetch("PUT", url, data);
-    return result.data ? result.data : result;
+    return result;
   }
 
-  public async delete(id: any) {
+  public async delete(id: any): Promise<void> {
     const url = this.url({ id });
     const result = await this.fetch("DELETE", url);
     return result;
