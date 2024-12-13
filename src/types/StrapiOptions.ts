@@ -2,6 +2,7 @@ import { StrapiQuery } from "./StrapiQuery";
 
 export type StrapiClientOptions = {
   url: string;
+  token?: string;
 };
 
 export type StrapiURI = {

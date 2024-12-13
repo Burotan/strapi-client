@@ -38,11 +38,17 @@ export class StrapiQueryBuilder<T> {
     url: string,
     data?: any
   ) {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (this.options.token) {
+      headers.Authorization = `Bearer ${this.options.token}`;
+    }
+
     const result = await fetch(url, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: data && JSON.stringify({ data }),
     });
 
