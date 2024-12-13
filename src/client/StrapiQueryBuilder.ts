@@ -20,12 +20,16 @@ export class StrapiQueryBuilder<T> {
 
     if (options.id) schema.push(options.id);
 
-    const fullUrl = schema.join("/");
+    let fullUrl = schema.join("/");
 
     if (options.query) {
-      const qs = QueryString.stringify(options.query);
-      return `${fullUrl}?${qs}`;
+      const qs = QueryString.stringify(options.query, {
+        encode: false,
+      });
+      fullUrl = `${fullUrl}?${qs}`;
     }
+
+    console.log(fullUrl);
     return fullUrl;
   }
 
