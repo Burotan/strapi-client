@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com/burotan/strapi-client"
+    "url": "https://github.com/burotan/strapi-client"
   },
   "keywords": [
     "Strapi",
