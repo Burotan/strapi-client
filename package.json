@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsup",
     "test": "jest",
-    "publish": "tsup && npm publish --access public"
+    "push": "tsup && npm publish --access public"
   },
   "repository": {
     "type": "git",

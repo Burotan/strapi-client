@@ -29,7 +29,6 @@ export class StrapiQueryBuilder<T> {
       fullUrl = `${fullUrl}?${qs}`;
     }
 
-    console.log(fullUrl);
     return fullUrl;
   }
 
