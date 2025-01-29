@@ -5,12 +5,26 @@ const chalk = require("chalk");
 const fs = require("fs");
 const path = require("path");
 
-const STORAGE_DIR = "storage";
-const CONFIG_FILE = path.join(STORAGE_DIR, "server.json");
+const CONFIG_FILE = ".strapi-client.json";
+const GITIGNORE = ".gitignore";
 
-function ensureStorageDir() {
-  if (!fs.existsSync(STORAGE_DIR)) {
-    fs.mkdirSync(STORAGE_DIR, { recursive: true });
+function ensureGitIgnore() {
+  try {
+    let content = "";
+    if (fs.existsSync(GITIGNORE)) {
+      content = fs.readFileSync(GITIGNORE, "utf8");
+      if (content.includes(CONFIG_FILE)) {
+        return;
+      }
+      content += content.endsWith("\n") ? "" : "\n";
+    }
+    content += CONFIG_FILE + "\n";
+    fs.writeFileSync(GITIGNORE, content);
+    console.log(chalk.green(`Added ${CONFIG_FILE} to .gitignore`));
+  } catch (error) {
+    console.error(
+      chalk.yellow(`\nWarning: Could not update .gitignore: ${error.message}`)
+    );
   }
 }
 
@@ -27,7 +41,6 @@ function loadConfig() {
 
 function saveConfig(config) {
   try {
-    ensureStorageDir();
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
     return true;
   } catch (error) {
@@ -150,6 +163,8 @@ async function handleInstall(serverPath) {
     serverPath: fullServerPath,
     packageManager,
   };
+
+  ensureGitIgnore();
 
   if (!saveConfig(config)) {
     console.error(chalk.red("\nFailed to save configuration."));

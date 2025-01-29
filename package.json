@@ -1,12 +1,17 @@
 {
   "name": "@burotan/strapi-client",
-  "version": "0.0.8",
-  "description": "Ultimate client for Strapi!",
+  "version": "0.0.9",
+  "description": "Ultimate type supported client for Strapi!",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "strapi-client": "./bin/strapi-client.js"
+  },
   "files": [
-    "dist"
+    "dist",
+    "bin",
+    "storage"
   ],
   "scripts": {
     "build": "tsup",
