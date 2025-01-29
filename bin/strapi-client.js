@@ -1,9 +1,16 @@
 #!/usr/bin/env node
 
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import inquirer from "inquirer";
+import chalk from "chalk";
+import openapiTS, { astToString } from "openapi-typescript";
+
+const { green, yellow, red, blue, cyan } = chalk;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const CONFIG_FILE = ".strapi-client.json";
 const GITIGNORE = ".gitignore";
@@ -20,10 +27,10 @@ function ensureGitIgnore() {
     }
     content += CONFIG_FILE + "\n";
     fs.writeFileSync(GITIGNORE, content);
-    console.log(chalk.green(`Added ${CONFIG_FILE} to .gitignore`));
+    console.log(green(`Added ${CONFIG_FILE} to .gitignore`));
   } catch (error) {
     console.error(
-      chalk.yellow(`\nWarning: Could not update .gitignore: ${error.message}`)
+      yellow(`\nWarning: Could not update .gitignore: ${error.message}`)
     );
   }
 }
@@ -34,7 +41,7 @@ function loadConfig() {
       return JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
     }
   } catch (error) {
-    console.error(chalk.red("\nError loading config:", error.message));
+    console.error(red("\nError loading config:", error.message));
   }
   return null;
 }
@@ -44,7 +51,7 @@ function saveConfig(config) {
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
     return true;
   } catch (error) {
-    console.error(chalk.red("\nError saving config:", error.message));
+    console.error(red("\nError saving config:", error.message));
     return false;
   }
 }
@@ -59,9 +66,7 @@ async function checkPackageManager(serverPath) {
       packageManager = "pnpm";
     }
   } catch (error) {
-    console.error(
-      chalk.red("\nError checking package manager:", error.message)
-    );
+    console.error(red("\nError checking package manager:", error.message));
   }
 
   return packageManager;
@@ -79,7 +84,7 @@ async function checkStrapiDocumentation(serverPath) {
     return "@strapi/plugin-documentation" in dependencies;
   } catch (error) {
     console.error(
-      chalk.red("\nError checking Strapi documentation plugin:", error.message)
+      red("\nError checking Strapi documentation plugin:", error.message)
     );
     return false;
   }
@@ -93,14 +98,15 @@ async function installPlugin(serverPath, packageManager) {
   };
 
   try {
-    console.log(chalk.cyan("\nInstalling @strapi/plugin-documentation..."));
-    require("child_process").execSync(installCommands[packageManager], {
+    console.log(cyan("\nInstalling @strapi/plugin-documentation..."));
+    const { execSync } = await import("child_process");
+    execSync(installCommands[packageManager], {
       cwd: serverPath,
       stdio: "inherit",
     });
     return true;
   } catch (error) {
-    console.error(chalk.red("\nError installing plugin:", error.message));
+    console.error(red("\nError installing plugin:", error.message));
     return false;
   }
 }
@@ -112,9 +118,7 @@ async function handleInstall(serverPath) {
       {
         type: "input",
         name: "serverPath",
-        message: chalk.cyan(
-          "Enter Strapi server folder location (relative path):"
-        ),
+        message: cyan("Enter Strapi server folder location (relative path):"),
         default: "../server",
         validate: (input) => {
           if (!fs.existsSync(path.resolve(input))) {
@@ -132,9 +136,7 @@ async function handleInstall(serverPath) {
 
   // Check package manager
   const detectedManager = await checkPackageManager(serverPath);
-  console.log(
-    chalk.blue(`\nDetected package manager: ${chalk.bold(detectedManager)}`)
-  );
+  console.log(blue(`\nDetected package manager: ${detectedManager}`));
 
   const { confirmManager } = await inquirer.prompt([
     {
@@ -167,16 +169,14 @@ async function handleInstall(serverPath) {
   ensureGitIgnore();
 
   if (!saveConfig(config)) {
-    console.error(chalk.red("\nFailed to save configuration."));
+    console.error(red("\nFailed to save configuration."));
     return;
   }
 
   // Check if documentation plugin is installed
   const isDocPluginInstalled = await checkStrapiDocumentation(serverPath);
   if (!isDocPluginInstalled) {
-    console.log(
-      chalk.yellow("\n@strapi/plugin-documentation is not installed.")
-    );
+    console.log(yellow("\n@strapi/plugin-documentation is not installed."));
     const { installDoc } = await inquirer.prompt([
       {
         type: "confirm",
@@ -190,22 +190,18 @@ async function handleInstall(serverPath) {
       const success = await installPlugin(serverPath, packageManager);
       if (success) {
         console.log(
-          chalk.green(
-            `\nYou can now generate types with ${chalk.bold(
-              `${packageManager} strapi-client:generate`
-            )}\nDon't forget to start your Strapi server!`
+          green(
+            `\nYou can now generate types with ${packageManager} strapi-client:generate\nDon't forget to start your Strapi server!`
           )
         );
       }
     } else {
-      console.log(chalk.yellow("\nOperation cancelled. Goodbye! 👋\n"));
+      console.log(yellow("\nOperation cancelled. Goodbye! 👋\n"));
     }
   } else {
     console.log(
-      chalk.green(
-        `\n@strapi/plugin-documentation is already installed.\nYou can generate types with ${chalk.bold(
-          `${packageManager} strapi-client:generate`
-        )}\nDon't forget to start your Strapi server!`
+      green(
+        `\n@strapi/plugin-documentation is already installed.\nYou can generate types with ${packageManager} strapi-client:generate\nDon't forget to start your Strapi server!`
       )
     );
   }
@@ -215,22 +211,107 @@ async function handleGenerate() {
   const config = loadConfig();
   if (!config) {
     console.error(
-      chalk.red(
-        "\nNo configuration found. Please run strapi-client:install first.\n"
+      red("\nNo configuration found. Please run strapi-client:install first.\n")
+    );
+    process.exit(1);
+  }
+
+  console.log(cyan("\nUsing configuration:"));
+  console.log(cyan("Server path:", config.serverPath));
+  console.log(cyan("Package manager:", config.packageManager));
+
+  // Check if documentation path exists
+  const serverFullPath = path.resolve(config.serverPath);
+  const docPath = path.join(
+    serverFullPath,
+    "src/extensions/documentation/documentation"
+  );
+  if (!fs.existsSync(docPath)) {
+    console.error(
+      red(
+        "\nDocumentation path not found. Please run strapi-client:install and ensure Strapi server is running.\n"
       )
     );
     process.exit(1);
   }
 
-  console.log(chalk.cyan("\nUsing configuration:"));
-  console.log(chalk.cyan("Server path:", config.serverPath));
-  console.log(chalk.cyan("Package manager:", config.packageManager));
+  // Find latest version
+  let latestVersion = "0.0.0";
+  try {
+    const versions = fs
+      .readdirSync(docPath)
+      .filter((dir) => /^\d+\.\d+\.\d+$/.test(dir))
+      .sort((a, b) => {
+        const [aMajor, aMinor, aPatch] = a.split(".").map(Number);
+        const [bMajor, bMinor, bPatch] = b.split(".").map(Number);
+        if (bMajor - aMajor !== 0) return bMajor - aMajor;
+        if (bMinor - aMinor !== 0) return bMinor - aMinor;
+        return bPatch - aPatch;
+      });
 
-  console.log(chalk.green("\n🔧 Generating types...\n"));
+    if (versions.length === 0) {
+      console.error(
+        red(
+          "\nNo documentation versions found. Please ensure Strapi server is running.\n"
+        )
+      );
+      process.exit(1);
+    }
+
+    latestVersion = versions[0];
+  } catch (error) {
+    console.error(red("\nError finding documentation version:", error.message));
+    process.exit(1);
+  }
+
+  // Set the types path
+  const typesPath = path.join(__dirname, "..", "types", "strapi.d.ts");
+
+  // Ensure directory exists
+  const typesDirPath = path.dirname(typesPath);
+  if (!fs.existsSync(typesDirPath)) {
+    fs.mkdirSync(typesDirPath, { recursive: true });
+  }
+
+  console.log(cyan(`Types will be generated at: ${typesPath}`));
+
+  // Generate types using openapi-typescript
+  const docFilePath = path.join(
+    docPath,
+    latestVersion,
+    "full_documentation.json"
+  );
+  if (!fs.existsSync(docFilePath)) {
+    console.error(
+      red(
+        `\nDocumentation file not found: ${docFilePath}\nPlease ensure Strapi server is running.\n`
+      )
+    );
+    process.exit(1);
+  }
+
+  try {
+    console.log(green("\n🔧 Generating types...\n"));
+
+    // Read and parse the OpenAPI schema
+    const schemaContent = fs.readFileSync(docFilePath, "utf8");
+    const schema = JSON.parse(schemaContent);
+
+    // Generate TypeScript types
+    const ast = await openapiTS(schema);
+    const output = astToString(ast);
+
+    // Write to file
+    fs.writeFileSync(typesPath, output);
+    console.log(green("\nThat's done!! 🎉\n"));
+  } catch (error) {
+    console.error(red("\nError generating types:", error.message));
+    process.exit(1);
+  }
 }
 
 async function main() {
-  console.log(chalk.blue.bold("\n🚀 Strapi Client CLI Tool\n"));
+  console.log(blue("\n🚀 Strapi Client CLI Tool\n"));
 
   // Check if command was provided as argument
   const command = process.argv[2];
@@ -242,13 +323,16 @@ async function main() {
         await handleInstall(arg);
         break;
       case "strapi-client:generate":
-        await handleGenerate();
+        await handleGenerate().catch((error) => {
+          console.error(red("\nError:", error.message));
+          process.exit(1);
+        });
         break;
       default:
-        console.error(chalk.red(`\nUnknown command: ${command}\n`));
-        console.log(chalk.yellow("Available commands:"));
-        console.log(chalk.yellow("  strapi-client:install <server-path>"));
-        console.log(chalk.yellow("  strapi-client:generate"));
+        console.error(red(`\nUnknown command: ${command}\n`));
+        console.log(yellow("Available commands:"));
+        console.log(yellow("  strapi-client:install <server-path>"));
+        console.log(yellow("  strapi-client:generate"));
         process.exit(1);
     }
     return;
@@ -259,7 +343,7 @@ async function main() {
     {
       type: "list",
       name: "action",
-      message: chalk.cyan("What would you like to do?"),
+      message: cyan("What would you like to do?"),
       choices: [
         {
           name: "📦 Install Strapi documentation plugin",
@@ -272,18 +356,21 @@ async function main() {
   ]);
 
   if (answers.action === "exit") {
-    console.log(chalk.red.bold("\nGoodbye! 👋\n"));
+    console.log(red("\nGoodbye! 👋\n"));
     process.exit(0);
   }
 
   if (answers.action === "strapi-client:install") {
     await handleInstall();
   } else if (answers.action === "strapi-client:generate") {
-    await handleGenerate();
+    await handleGenerate().catch((error) => {
+      console.error(red("\nError:", error.message));
+      process.exit(1);
+    });
   }
 }
 
 main().catch((error) => {
-  console.error(chalk.red("\nError:", error.message, "\n"));
+  console.error(red("\nError:", error.message, "\n"));
   process.exit(1);
 });
