@@ -2,7 +2,7 @@ import { StrapiClientOptions } from "../types/StrapiOptions";
 import type { paths } from "../../types/strapi";
 import createClient from "openapi-fetch";
 
-export class StrapiClient {
+export class Strapi {
   private options: StrapiClientOptions;
   client: ReturnType<typeof createClient<paths>>;
 
@@ -10,7 +10,7 @@ export class StrapiClient {
     this.options = options;
 
     this.client = createClient<paths>({
-      baseUrl: this.options.url,
+      baseUrl: `${this.options.url}/api`,
       headers: {
         "Content-Type": "application/json",
         ...(this.options.token && {

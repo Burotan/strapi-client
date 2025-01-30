@@ -16,7 +16,7 @@
     "build": "tsup",
     "test": "jest",
     "watch": "tsup --watch",
-    "push": "tsup && npm publish --access public"
+    "push": "npm publish --access public"
   },
   "repository": {
     "type": "git",
