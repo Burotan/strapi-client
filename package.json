@@ -8,7 +8,6 @@
     "strapi-client": "./bin/strapi-client.js"
   },
   "files": [
-    "dist",
     "bin",
     "types"
   ],
