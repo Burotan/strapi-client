@@ -1,4 +1,4 @@
-export type StrapiQuery = {
+export type StrapiQuery<T> = {
   filters?: any;
   fields?: string[];
   populate?: any;

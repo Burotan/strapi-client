@@ -1,3 +1,4 @@
+/*
 import QueryString from "qs";
 import { StrapiQuery } from "../types/StrapiQuery";
 import {
@@ -92,3 +93,4 @@ export class StrapiQueryBuilder<T> {
     return result;
   }
 }
+*/

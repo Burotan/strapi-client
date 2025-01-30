@@ -1,22 +1,27 @@
-import { StrapiClientOptions } from "../types/StrapiOptions";
-import type { paths } from "../../types/strapi";
 import createClient from "openapi-fetch";
+import { StrapiClientOptions } from "../types/StrapiOptions";
+import { paths } from "../../types/strapi";
 
 export class Strapi {
-  private options: StrapiClientOptions;
   client: ReturnType<typeof createClient<paths>>;
 
   constructor(options: StrapiClientOptions) {
-    this.options = options;
+    // this.client = new StrapiClient(options);
 
     this.client = createClient<paths>({
-      baseUrl: `${this.options.url}/api`,
+      baseUrl: `${options.url}/api`,
       headers: {
         "Content-Type": "application/json",
-        ...(this.options.token && {
-          Authorization: `Bearer ${this.options.token}`,
+        ...(options.token && {
+          Authorization: `Bearer ${options.token}`,
         }),
       },
     });
   }
+
+  async login() {}
+
+  async logout() {}
+
+  async upload() {}
 }

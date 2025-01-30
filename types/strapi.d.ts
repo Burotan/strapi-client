@@ -1299,6 +1299,8 @@ export interface components {
         TenantRequest: {
             data: {
                 name?: string;
+                users?: (number | string)[];
+                burotan?: string;
                 locale?: string;
                 localizations?: (number | string)[];
             };
@@ -1318,41 +1320,27 @@ export interface components {
             id?: number;
             documentId?: string;
             name?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            /** Format: date-time */
-            publishedAt?: string;
-            createdBy?: {
+            users?: {
                 id?: number;
                 documentId?: string;
-                firstname?: string;
-                lastname?: string;
                 username?: string;
                 /** Format: email */
                 email?: string;
+                provider?: string;
                 resetPasswordToken?: string;
-                registrationToken?: string;
-                isActive?: boolean;
-                roles?: {
+                confirmationToken?: string;
+                confirmed?: boolean;
+                blocked?: boolean;
+                role?: {
                     id?: number;
                     documentId?: string;
                     name?: string;
-                    code?: string;
                     description?: string;
-                    users?: {
-                        id?: number;
-                        documentId?: string;
-                    }[];
+                    type?: string;
                     permissions?: {
                         id?: number;
                         documentId?: string;
                         action?: string;
-                        actionParameters?: unknown;
-                        subject?: string;
-                        properties?: unknown;
-                        conditions?: unknown;
                         role?: {
                             id?: number;
                             documentId?: string;
@@ -1366,6 +1354,97 @@ export interface components {
                         createdBy?: {
                             id?: number;
                             documentId?: string;
+                            firstname?: string;
+                            lastname?: string;
+                            username?: string;
+                            /** Format: email */
+                            email?: string;
+                            resetPasswordToken?: string;
+                            registrationToken?: string;
+                            isActive?: boolean;
+                            roles?: {
+                                id?: number;
+                                documentId?: string;
+                                name?: string;
+                                code?: string;
+                                description?: string;
+                                users?: {
+                                    id?: number;
+                                    documentId?: string;
+                                }[];
+                                permissions?: {
+                                    id?: number;
+                                    documentId?: string;
+                                    action?: string;
+                                    actionParameters?: unknown;
+                                    subject?: string;
+                                    properties?: unknown;
+                                    conditions?: unknown;
+                                    role?: {
+                                        id?: number;
+                                        documentId?: string;
+                                    };
+                                    /** Format: date-time */
+                                    createdAt?: string;
+                                    /** Format: date-time */
+                                    updatedAt?: string;
+                                    /** Format: date-time */
+                                    publishedAt?: string;
+                                    createdBy?: {
+                                        id?: number;
+                                        documentId?: string;
+                                    };
+                                    updatedBy?: {
+                                        id?: number;
+                                        documentId?: string;
+                                    };
+                                    locale?: string;
+                                    localizations?: {
+                                        id?: number;
+                                        documentId?: string;
+                                    }[];
+                                }[];
+                                /** Format: date-time */
+                                createdAt?: string;
+                                /** Format: date-time */
+                                updatedAt?: string;
+                                /** Format: date-time */
+                                publishedAt?: string;
+                                createdBy?: {
+                                    id?: number;
+                                    documentId?: string;
+                                };
+                                updatedBy?: {
+                                    id?: number;
+                                    documentId?: string;
+                                };
+                                locale?: string;
+                                localizations?: {
+                                    id?: number;
+                                    documentId?: string;
+                                }[];
+                            }[];
+                            blocked?: boolean;
+                            preferedLanguage?: string;
+                            /** Format: date-time */
+                            createdAt?: string;
+                            /** Format: date-time */
+                            updatedAt?: string;
+                            /** Format: date-time */
+                            publishedAt?: string;
+                            createdBy?: {
+                                id?: number;
+                                documentId?: string;
+                            };
+                            updatedBy?: {
+                                id?: number;
+                                documentId?: string;
+                            };
+                            locale?: string;
+                            localizations?: {
+                                id?: number;
+                                documentId?: string;
+                            }[];
                         };
                         updatedBy?: {
                             id?: number;
@@ -1376,6 +1455,10 @@ export interface components {
                             id?: number;
                             documentId?: string;
                         }[];
+                    }[];
+                    users?: {
+                        id?: number;
+                        documentId?: string;
                     }[];
                     /** Format: date-time */
                     createdAt?: string;
@@ -1396,9 +1479,36 @@ export interface components {
                         id?: number;
                         documentId?: string;
                     }[];
-                }[];
-                blocked?: boolean;
-                preferedLanguage?: string;
+                };
+                tenant?: {
+                    id?: number;
+                    documentId?: string;
+                    name?: string;
+                    users?: {
+                        id?: number;
+                        documentId?: string;
+                    }[];
+                    burotan?: string;
+                    /** Format: date-time */
+                    createdAt?: string;
+                    /** Format: date-time */
+                    updatedAt?: string;
+                    /** Format: date-time */
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: {
+                        id?: number;
+                        documentId?: string;
+                    }[];
+                };
                 /** Format: date-time */
                 createdAt?: string;
                 /** Format: date-time */
@@ -1418,6 +1528,17 @@ export interface components {
                     id?: number;
                     documentId?: string;
                 }[];
+            }[];
+            burotan?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            createdBy?: {
+                id?: number;
+                documentId?: string;
             };
             updatedBy?: {
                 id?: number;
@@ -1427,26 +1548,6 @@ export interface components {
             localizations?: {
                 id?: number;
                 documentId?: string;
-                name?: string;
-                /** Format: date-time */
-                createdAt?: string;
-                /** Format: date-time */
-                updatedAt?: string;
-                /** Format: date-time */
-                publishedAt?: string;
-                createdBy?: {
-                    id?: number;
-                    documentId?: string;
-                };
-                updatedBy?: {
-                    id?: number;
-                    documentId?: string;
-                };
-                locale?: string;
-                localizations?: {
-                    id?: number;
-                    documentId?: string;
-                }[];
             }[];
         };
         TenantResponse: {
