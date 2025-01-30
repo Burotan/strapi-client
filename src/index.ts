@@ -1,7 +1,3 @@
-export type { Strapi } from "./client/Strapi";
-export type {
-  StrapiResult,
-  StrapiError,
-  StrapiMeta,
-} from "./types/StrapiOptions";
-export type { StrapiQuery } from "./types/StrapiQuery";
+export { Strapi } from "./client/Strapi";
+export { StrapiResult, StrapiError, StrapiMeta } from "./types/StrapiOptions";
+export { StrapiQuery } from "./types/StrapiQuery";
