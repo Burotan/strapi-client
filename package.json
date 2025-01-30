@@ -1,6 +1,6 @@
 {
   "name": "@burotan/strapi-client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Ultimate type supported api client for Strapi!",
   "main": "./src/index.ts",
   "type": "module",
