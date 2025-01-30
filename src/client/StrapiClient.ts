@@ -19,22 +19,12 @@ export class StrapiClient {
     });
   }
 
-  async get(endpoint: PathsWithMethod<paths, "get">) {
-    return await this.client.GET(endpoint, {
-      params: {
-        query: {},
-      },
-    });
+  async get() {
+    console.log("get");
   }
 
-  async post(enpoint: PathsWithMethod<paths, "post">) {
-    const result = await this.client.POST("/tenants", {
-      body: {
-        data: {
-          name: "test",
-        },
-      },
-    });
+  async post() {
+    console.log("post");
   }
 
   async put() {
